@@ -1,0 +1,23 @@
+logLevel = "INFO"
+
+[web]
+address = ":8080"
+
+[entryPoints]
+  [entryPoints.http]
+    address = ":80"
+
+[file]
+  [backends]
+    [backends.backend1]
+      [backends.backend1.loadbalancer]
+        method = "wrr"
+        sticky = true
+      [backends.backend1.servers.server1]
+        url = "http://front-end:8079"
+
+  [frontends]
+    [frontends.frontend1]
+      backend = "backend1"
+      entrypoints = ["http"]
+
