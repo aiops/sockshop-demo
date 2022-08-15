@@ -1,0 +1,103 @@
+version: '2'
+
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.16.2
+    hostname: elasticsearch
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.16.2
+    hostname: kibana
+    depends_on:
+      - elasticsearch
+    ports:
+      - '5601:5601'
+  log-server:
+    image: weaveworksdemos/log-server
+    hostname: log-server
+    depends_on:
+      - elasticsearch
+    ports:
+      - '24224:24224'
+  front-end:
+    logging:
+      driver: fluentd
+    depends_on:
+      - log-server
+  edge-router:
+    logging:
+      driver: fluentd
+    depends_on:
+      - log-server
+  catalogue:
+    logging:
+      driver: fluentd
+    depends_on:
+      - log-server
+  catalogue-db:
+    logging:
+      driver: fluentd
+    depends_on:
+      - log-server
+  carts:
+    logging:
+      driver: fluentd
+    depends_on:
+      - log-server
+  carts-db:
+    logging:
+      driver: fluentd
+    depends_on:
+      - log-server
+  orders:
+    logging:
+      driver: fluentd
+    depends_on:
+      - log-server
+  orders-db:
+    logging:
+      driver: fluentd
+    depends_on:
+      - log-server
+  shipping:
+    logging:
+      driver: fluentd
+    depends_on:
+      - log-server
+  queue-master:
+    logging:
+      driver: fluentd
+    depends_on:
+      - log-server
+  rabbitmq:
+    logging:
+      driver: fluentd
+    depends_on:
+      - log-server
+  payment:
+    logging:
+      driver: fluentd
+    depends_on:
+      - log-server
+  user:
+    logging:
+      driver: fluentd
+    depends_on:
+      - log-server
+  user-db:
+    logging:
+      driver: fluentd
+    depends_on:
+      - log-server
+  user-sim:
+    logging:
+      driver: fluentd
+    depends_on:
+      - log-server
+  fluent-bit:
+    image: fluent/fluent-bit
+    volumes:
+      - ./fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf
+      - /:/host
+    network_mode: "host"
+    logging:
+      driver: none
