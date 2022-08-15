@@ -17,6 +17,6 @@ jobs:
           username: ${{ secrets.LOGSIGHT_USERNAME }}
           password: ${{ secrets.LOGSIGHT_PASSWORD }}
           repository: ${{ steps.setup.outputs.repository }}
-          baseline_tag: v1
-          candidate_tag: v1
+          baseline_tag: ${{ github.event.pull_request.base.ref_name }}
+          candidate_tag: ${{ github.event.pull_request.head.ref_name }}
           risk_threshold: 25
