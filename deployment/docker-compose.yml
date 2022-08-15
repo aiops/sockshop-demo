@@ -5,15 +5,11 @@ services:
     image: weaveworksdemos/front-end:0.3.12
     hostname: front-end
     restart: always
-    logging:
-      driver: fluentd
     cap_drop:
       - ALL
     read_only: true
   edge-router:
     image: weaveworksdemos/edge-router:0.1.1
-    logging:
-      driver: fluentd
     ports:
       - '80:80'
       - '8080:8080'
@@ -34,8 +30,6 @@ services:
     image: weaveworksdemos/catalogue:0.3.5
     hostname: catalogue
     restart: always
-    logging:
-      driver: fluentd
     cap_drop:
       - ALL
     cap_add:
@@ -45,8 +39,6 @@ services:
     image: weaveworksdemos/catalogue-db:0.3.0
     hostname: catalogue-db
     restart: always
-    logging:
-      driver: fluentd
     environment:
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
       - MYSQL_ALLOW_EMPTY_PASSWORD=true
@@ -55,8 +47,6 @@ services:
     image: weaveworksdemos/carts:0.4.8
     hostname: carts
     restart: always
-    logging:
-      driver: fluentd
     cap_drop:
       - ALL
     cap_add:
@@ -70,8 +60,6 @@ services:
     image: mongo:3.4
     hostname: carts-db
     restart: always
-    logging:
-      driver: fluentd
     cap_drop:
       - ALL
     cap_add:
@@ -82,10 +70,8 @@ services:
     tmpfs:
       - /tmp:rw,noexec,nosuid
   orders:
-    image: weaveworksdemos/orders:0.4.7
+    image: aiops/orders:v1
     hostname: orders
-    logging:
-      driver: fluentd
     restart: always
     cap_drop:
       - ALL
@@ -100,8 +86,6 @@ services:
     image: mongo:3.4
     hostname: orders-db
     restart: always
-    logging:
-      driver: fluentd
     cap_drop:
       - ALL
     cap_add:
@@ -115,8 +99,6 @@ services:
     image: weaveworksdemos/shipping:0.4.8
     hostname: shipping
     restart: always
-    logging:
-      driver: fluentd
     cap_drop:
       - ALL
     cap_add:
@@ -129,8 +111,6 @@ services:
   queue-master:
     image: weaveworksdemos/queue-master:0.3.1
     hostname: queue-master
-    logging:
-      driver: fluentd
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     restart: always
@@ -145,8 +125,6 @@ services:
     image: rabbitmq:3.6.8
     hostname: rabbitmq
     restart: always
-    logging:
-      driver: fluentd
     cap_drop:
       - ALL
     cap_add:
@@ -159,8 +137,6 @@ services:
     image: weaveworksdemos/payment:0.4.3
     hostname: payment
     restart: always
-    logging:
-      driver: fluentd
     cap_drop:
       - ALL
     cap_add:
@@ -170,8 +146,6 @@ services:
     image: weaveworksdemos/user:0.4.4
     hostname: user
     restart: always
-    logging:
-      driver: fluentd
     cap_drop:
       - ALL
     cap_add:
@@ -183,8 +157,6 @@ services:
     image: weaveworksdemos/user-db:0.4.0
     hostname: user-db
     restart: always
-    logging:
-      driver: fluentd
     cap_drop:
       - ALL
     cap_add:
@@ -196,10 +168,17 @@ services:
       - /tmp:rw,noexec,nosuid
   user-sim:
     image: weaveworksdemos/load-test:0.1.1
-    logging:
-      driver: fluentd
     cap_drop:
       - ALL
     read_only: true
     hostname: user-simulator
     command: "-d 60 -r 200 -c 2 -h edge-router"
+
+  fluent-bit:
+    image: fluent/fluent-bit
+    volumes:
+      - ./fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf
+      - /:/host
+    network_mode: "host"
+    logging:
+      driver: none
