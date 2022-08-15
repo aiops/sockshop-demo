@@ -4,13 +4,16 @@ public class PaymentResponse {
     private boolean authorised = false;
     private String  message;
 
+    private String isFraud;
+
     // For jackson
     public PaymentResponse() {
     }
 
-    public PaymentResponse(boolean authorised, String message) {
+    public PaymentResponse(boolean authorised, String message, String isFraud) {
         this.authorised = authorised;
         this.message = message;
+        this.isFraud = isFraud;
     }
 
     @Override
@@ -18,6 +21,7 @@ public class PaymentResponse {
         return "PaymentResponse{" +
                 "authorised=" + authorised +
                 ", message=" + message +
+                ", isFraud=" + isFraud +
                 '}';
     }
 
@@ -36,4 +40,9 @@ public class PaymentResponse {
     public String getMessage() {
         return message;
     }
+
+    public String getIsFraud() {
+        return isFraud;
+    }
+
 }
