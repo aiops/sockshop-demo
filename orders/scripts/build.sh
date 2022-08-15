@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 
 IMAGE=orders
+GROUP=aiops
+
+COMMIT=$1
 
 set -ev
 
