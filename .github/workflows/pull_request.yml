@@ -1,0 +1,22 @@
+name: 'logsight.ai Verification'
+on:
+  pull_request_target:
+    types: [assigned, opened, synchronize, reopened]
+
+jobs:
+  deployment_risk:
+    runs-on: ubuntu-latest
+    steps:
+
+      - uses: actions/checkout@v2
+      - name: Verify Logs
+        uses: aiops/logsight-verification-action@v1.2.1
+        id: verify-logs
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          username: ${{ secrets.LOGSIGHT_USERNAME }}
+          password: ${{ secrets.LOGSIGHT_PASSWORD }}
+          repository: ${{ steps.setup.outputs.repository }}
+          baseline_tag: ${{ github.event.pull_request.base.ref }}
+          candidate_tag: ${{ github.event.pull_request.head.ref }}
+          risk_threshold: 25
