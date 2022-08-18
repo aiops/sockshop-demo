@@ -8,11 +8,13 @@ services:
     cap_drop:
       - ALL
     read_only: true
+    logging:
+      driver: none
   edge-router:
     image: weaveworksdemos/edge-router:0.1.1
     ports:
-      - '80:80'
-      - '8080:8080'
+      - '81:80'
+      - '8081:8080'
     cap_drop:
       - ALL
     cap_add:
@@ -21,6 +23,8 @@ services:
       - SETGID
       - SETUID
       - DAC_OVERRIDE
+    logging:
+      driver: none
     read_only: true
     tmpfs:
       - /var/run:rw,noexec,nosuid
@@ -172,7 +176,7 @@ services:
       - ALL
     read_only: true
     hostname: user-simulator
-    command: "-d 60 -r 200 -c 2 -h edge-router"
+    command: "-d 5 -r 500 -c 3 -h edge-router"
 
   fluent-bit:
     image: fluent/fluent-bit
