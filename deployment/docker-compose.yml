@@ -47,6 +47,8 @@ services:
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
       - MYSQL_ALLOW_EMPTY_PASSWORD=true
       - MYSQL_DATABASE=socksdb
+    logging:
+      driver: none
   carts:
     image: weaveworksdemos/carts:0.4.8
     hostname: carts
@@ -170,6 +172,8 @@ services:
     read_only: true
     tmpfs:
       - /tmp:rw,noexec,nosuid
+    logging:
+      driver: none
   user-sim:
     image: weaveworksdemos/load-test:0.1.1
     cap_drop:
