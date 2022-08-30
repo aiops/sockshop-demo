@@ -90,7 +90,7 @@ public class OrdersController {
             PaymentResponse paymentResponse = paymentFuture.get(timeout, TimeUnit.SECONDS);
             LOG.info("Received payment response: " + paymentResponse);
             if (paymentResponse == null) {
-                LOG.error("Unable to parse authorisation packet! Requested value is missing!");
+                LOG.info("Unable to parse authorisation packet! Requested value is missing!");
                 throw new PaymentDeclinedException("Unable to parse authorisation packet");
             }
             if (!paymentResponse.isAuthorised()) {
