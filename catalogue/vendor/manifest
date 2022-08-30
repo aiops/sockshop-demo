@@ -1,6 +1,23 @@
 {
 	"version": 0,
 	"dependencies": [
+
+		{
+			"importpath": "github.com/Shopify/sarama",
+			"repository": "https://github.com/Shopify/sarama",
+			"vcs": "git",
+			"revision": "0fb560e5f7fbcaee2f75e3c34174320709f69944",
+			"branch": "master",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/Sirupsen/logrus",
+			"repository": "https://github.com/Sirupsen/logrus",
+			"vcs": "git",
+			"revision": "10f801ebc38b33738c9d17d50860f484a0988ff5",
+			"branch": "master",
+			"notests": true
+		},
 		{
 			"importpath": "cloud.google.com/go/compute/metadata",
 			"repository": "https://code.googlesource.com/gocloud",
@@ -17,22 +34,6 @@
 			"revision": "daf945bb8684eb8df711af0c3e3a07930a2a01b0",
 			"branch": "master",
 			"path": "internal",
-			"notests": true
-		},
-		{
-			"importpath": "github.com/Shopify/sarama",
-			"repository": "https://github.com/Shopify/sarama",
-			"vcs": "git",
-			"revision": "0fb560e5f7fbcaee2f75e3c34174320709f69944",
-			"branch": "master",
-			"notests": true
-		},
-		{
-			"importpath": "github.com/Sirupsen/logrus",
-			"repository": "https://github.com/Sirupsen/logrus",
-			"vcs": "git",
-			"revision": "10f801ebc38b33738c9d17d50860f484a0988ff5",
-			"branch": "master",
 			"notests": true
 		},
 		{
@@ -53,21 +54,21 @@
 			"notests": true
 		},
 		{
-			"importpath": "github.com/apache/thrift/lib/go/thrift",
-			"repository": "https://github.com/apache/thrift",
-			"vcs": "git",
-			"revision": "30a8b65dcec88d0710143ca2b94f71915a8549c5",
-			"branch": "master",
-			"path": "/lib/go/thrift",
-			"notests": true
-		},
-		{
 			"importpath": "github.com/beorn7/perks/quantile",
 			"repository": "https://github.com/beorn7/perks",
 			"vcs": "git",
 			"revision": "4c0e84591b9aa9e6dcfdf3e020114cd81f89d5f9",
 			"branch": "master",
 			"path": "/quantile",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/apache/thrift/lib/go/thrift",
+			"repository": "https://github.com/apache/thrift",
+			"vcs": "git",
+			"revision": "30a8b65dcec88d0710143ca2b94f71915a8549c5",
+			"branch": "master",
+			"path": "/lib/go/thrift",
 			"notests": true
 		},
 		{
@@ -105,18 +106,18 @@
 			"notests": true
 		},
 		{
-			"importpath": "github.com/eapache/go-xerial-snappy",
-			"repository": "https://github.com/eapache/go-xerial-snappy",
-			"vcs": "git",
-			"revision": "bb955e01b9346ac19dc29eb16586c90ded99a98c",
-			"branch": "master",
-			"notests": true
-		},
-		{
 			"importpath": "github.com/eapache/queue",
 			"repository": "https://github.com/eapache/queue",
 			"vcs": "git",
 			"revision": "44cc805cf13205b55f69e14bcb69867d1ae92f98",
+			"branch": "master",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/eapache/go-xerial-snappy",
+			"repository": "https://github.com/eapache/go-xerial-snappy",
+			"vcs": "git",
+			"revision": "bb955e01b9346ac19dc29eb16586c90ded99a98c",
 			"branch": "master",
 			"notests": true
 		},
