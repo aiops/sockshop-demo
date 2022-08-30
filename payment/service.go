@@ -7,11 +7,19 @@ import (
 )
 
 // Middleware decorates a service.
-type Middleware func(Service) Service
 
 type Service interface {
 	Authorise(total float32) (Authorisation, error) // GET /paymentAuth
 	Health() []Health                               // GET /health
+
+}
+
+type Middleware func(Service) Service
+
+type Health struct {
+	Service string `json:"service"`
+	Status  string `json:"status"`
+	Time    string `json:"time"`
 }
 
 type Authorisation struct {
@@ -19,11 +27,7 @@ type Authorisation struct {
 	Message    string `json:"message"`
 }
 
-type Health struct {
-	Service string `json:"service"`
-	Status  string `json:"status"`
-	Time    string `json:"time"`
-}
+
 
 // NewFixedService returns a simple implementation of the Service interface,
 // fixed over a predefined set of socks and tags. In a real service you'd
@@ -36,6 +40,14 @@ func NewAuthorisationService(declineOverAmount float32) Service {
 
 type service struct {
 	declineOverAmount float32
+}
+
+
+func (s *service) Health() []Health {
+	var health []Health
+	app := Health{"payment", "OK", time.Now().String()}
+	health = append(health, app)
+	return health
 }
 
 func (s *service) Authorise(amount float32) (Authorisation, error) {
@@ -59,11 +71,5 @@ func (s *service) Authorise(amount float32) (Authorisation, error) {
 	}, nil
 }
 
-func (s *service) Health() []Health {
-	var health []Health
-	app := Health{"payment", "OK", time.Now().String()}
-	health = append(health, app)
-	return health
-}
 
 var ErrInvalidPaymentAmount = errors.New("Invalid payment amount")
