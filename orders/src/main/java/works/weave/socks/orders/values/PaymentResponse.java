@@ -45,4 +45,12 @@ public class PaymentResponse {
         return isFraud;
     }
 
+   public String setIsFraud(String isFraud) {
+        this.isFraud = isFraud;
+    }
+
+    public String getIsFraud() {
+        return isFraud;
+    }
+
 }

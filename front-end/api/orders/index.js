@@ -9,7 +9,7 @@
     , app       = express()
 
   app.get("/orders", function (req, res, next) {
-    console.log("Request received with body: " + JSON.stringify(req.body));
+    // console.log("Request received with body: " + JSON.stringify(req.body));
     var logged_in = req.cookies.logged_in;
     if (!logged_in) {
       throw new Error("User not logged in.");
@@ -23,9 +23,9 @@
             if (error) {
               return callback(error);
             }
-            console.log("Received response: " + JSON.stringify(body));
+            // console.log("Received response: " + JSON.stringify(body));
             if (response.statusCode == 404) {
-              console.log("No orders found for user: " + custId);
+              // console.log("No orders found for user: " + custId);
               return callback(null, []);
             }
             callback(null, JSON.parse(body)._embedded.customerOrders);
@@ -46,7 +46,7 @@
   });
 
   app.post("/orders", function(req, res, next) {
-    console.log("Request received with body: " + JSON.stringify(req.body));
+    // console.log("Request received with body: " + JSON.stringify(req.body));
     var logged_in = req.cookies.logged_in;
     if (!logged_in) {
       throw new Error("User not logged in.");
@@ -62,7 +62,7 @@
               callback(error);
               return;
             }
-            console.log("Received response: " + JSON.stringify(body));
+            // console.log("Received response: " + JSON.stringify(body));
             var jsonBody = JSON.parse(body);
             var customerlink = jsonBody._links.customer.href;
             var addressLink = jsonBody._links.addresses.href;
@@ -79,13 +79,13 @@
         function (order, addressLink, cardLink, callback) {
           async.parallel([
               function (callback) {
-                console.log("GET Request to: " + addressLink);
+                // console.log("GET Request to: " + addressLink);
                 request.get(addressLink, function (error, response, body) {
                   if (error) {
                     callback(error);
                     return;
                   }
-                  console.log("Received response: " + JSON.stringify(body));
+                  // console.log("Received response: " + JSON.stringify(body));
                   var jsonBody = JSON.parse(body);
                   if (jsonBody.status_code !== 500 && jsonBody._embedded.address[0] != null) {
                     order.address = jsonBody._embedded.address[0]._links.self.href;
@@ -94,7 +94,7 @@
                 });
               },
               function (callback) {
-                console.log("GET Request to: " + cardLink);
+                // console.log("GET Request to: " + cardLink);
                 request.get(cardLink, function (error, response, body) {
                   if (error) {
                     callback(error);
@@ -113,7 +113,7 @@
               callback(err);
               return;
             }
-            console.log(result);
+            // console.log(result);
             callback(null, order);
           });
         },
@@ -124,13 +124,13 @@
             json: true,
             body: order
           };
-          console.log("Posting Order: " + JSON.stringify(order));
+          // console.log("Posting Order: " + JSON.stringify(order));
           request(options, function (error, response, body) {
             if (error) {
               return callback(error);
             }
-            console.log("Order response: " + JSON.stringify(response));
-            console.log("Order response: " + JSON.stringify(body));
+            // console.log("Order response: " + JSON.stringify(response));
+            // console.log("Order response: " + JSON.stringify(body));
             callback(null, response.statusCode, body);
           });
         }
@@ -144,7 +144,7 @@
   });
 
    app.post("/orders_old", function(req, res, next) {
-    console.log("Request received with body: " + JSON.stringify(req.body));
+    // console.log("Request received with body: " + JSON.stringify(req.body));
     var logged_in = req.cookies.logged_in;
     if (!logged_in) {
       throw new Error("User not logged in.");
@@ -160,7 +160,7 @@
               callback(error);
               return;
             }
-            console.log("Received response: " + JSON.stringify(body));
+            // console.log("Received response: " + JSON.stringify(body));
             var jsonBody = JSON.parse(body);
             var customerlink = jsonBody._links.customer.href;
             var addressLink = jsonBody._links.addresses.href;
@@ -183,7 +183,7 @@
                     callback(error);
                     return;
                   }
-                  console.log("Received response: " + JSON.stringify(body));
+                  // console.log("Received response: " + JSON.stringify(body));
                   var jsonBody = JSON.parse(body);
                   if (jsonBody.status_code !== 500 && jsonBody._embedded.address[0] != null) {
                     order.address = jsonBody._embedded.address[0]._links.self.href;
@@ -227,8 +227,8 @@
             if (error) {
               return callback(error);
             }
-            console.log("Order response: " + JSON.stringify(response));
-            console.log("Order response: " + JSON.stringify(body));
+            // console.log("Order response: " + JSON.stringify(response));
+            // console.log("Order response: " + JSON.stringify(body));
             callback(null, response.statusCode, body);
           });
         }
