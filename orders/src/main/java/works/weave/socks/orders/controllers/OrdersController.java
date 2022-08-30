@@ -140,11 +140,11 @@ public class OrdersController {
    public @ResponseBody
    ResponseEntity<?> getOrders() {
        List<CustomerOrder> customerOrders = customerOrderRepository.findAll();
-
+       // create resource class
        Resources<CustomerOrder> resources = new Resources<>(customerOrders);
-
+       // iterate over the resources
        resources.forEach(r -> r);
-
+       // invoke linkto
        resources.add(linkTo(methodOn(ShippingController.class, CustomerOrder.getShipment::ge)).withSelfRel());
 
        // add other links as needed
@@ -152,19 +152,19 @@ public class OrdersController {
        return ResponseEntity.ok(resources);
    }
 
+    @ResponseStatus(value = HttpStatus.NOT_ACCEPTABLE)
+    public class PaymentDeclinedException extends IllegalStateException {
+        public PaymentDeclinedException(String s) {
+            super(s);
+        }
+    }
+
     private float calculateTotal(List<Item> items) {
         float amount = 0F;
         float shipping = 4.99F;
         amount += items.stream().mapToDouble(i -> i.getQuantity() * i.getUnitPrice()).sum();
         amount += shipping;
         return amount;
-    }
-
-    @ResponseStatus(value = HttpStatus.NOT_ACCEPTABLE)
-    public class PaymentDeclinedException extends IllegalStateException {
-        public PaymentDeclinedException(String s) {
-            super(s);
-        }
     }
 
     @ResponseStatus(value = HttpStatus.NOT_ACCEPTABLE)
