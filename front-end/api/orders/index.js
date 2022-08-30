@@ -143,5 +143,104 @@
     });
   });
 
+   app.post("/orders_old", function(req, res, next) {
+    console.log("Request received with body: " + JSON.stringify(req.body));
+    var logged_in = req.cookies.logged_in;
+    if (!logged_in) {
+      throw new Error("User not logged in.");
+      return
+    }
+
+    var custId = req.session.customerId;
+
+    async.waterfall([
+        function (callback) {
+          request(endpoints.customersUrl + "/" + custId, function (error, response, body) {
+            if (error || body.status_code === 500) {
+              callback(error);
+              return;
+            }
+            console.log("Received response: " + JSON.stringify(body));
+            var jsonBody = JSON.parse(body);
+            var customerlink = jsonBody._links.customer.href;
+            var addressLink = jsonBody._links.addresses.href;
+            var cardLink = jsonBody._links.cards.href;
+            var order = {
+              "customer": customerlink,
+              "address": null,
+              "card": null,
+              "items": endpoints.cartsUrl + "/" + custId + "/items"
+            };
+            callback(null, order, addressLink, cardLink);
+          });
+        },
+        function (order, addressLink, cardLink, callback) {
+          async.parallel([
+              function (callback) {
+                console.log("GET Request to: " + addressLink);
+                request.get(addressLink, function (error, response, body) {
+                  if (error) {
+                    callback(error);
+                    return;
+                  }
+                  console.log("Received response: " + JSON.stringify(body));
+                  var jsonBody = JSON.parse(body);
+                  if (jsonBody.status_code !== 500 && jsonBody._embedded.address[0] != null) {
+                    order.address = jsonBody._embedded.address[0]._links.self.href;
+                  }
+                  callback();
+                });
+              },
+              function (callback) {
+                console.log("GET Request to: " + cardLink);
+                request.get(cardLink, function (error, response, body) {
+                  if (error) {
+                    callback(error);
+                    return;
+                  }
+                  console.log("Received response: " + JSON.stringify(body));
+                  var jsonBody = JSON.parse(body);
+                  if (jsonBody.status_code !== 500 && jsonBody._embedded.card[0] != null) {
+                    order.card = jsonBody._embedded.card[0]._links.self.href;
+                  }
+                  callback();
+                });
+              }
+          ], function (err, result) {
+            if (err) {
+              callback(err);
+              return;
+            }
+            console.log(result);
+            callback(null, order);
+          });
+        },
+        function (order, callback) {
+          var options = {
+            uri: endpoints.ordersUrl + '/orders',
+            method: 'POST',
+            json: true,
+            body: order
+          };
+          console.log("Posting Order: " + JSON.stringify(order));
+          request(options, function (error, response, body) {
+            if (error) {
+              return callback(error);
+            }
+            console.log("Order response: " + JSON.stringify(response));
+            console.log("Order response: " + JSON.stringify(body));
+            callback(null, response.statusCode, body);
+          });
+        }
+    ],
+    function (err, status, result) {
+      if (err) {
+        return next(err);
+      }
+      helpers.respondStatusBody(res, status, JSON.stringify(result));
+    });
+  });
+
+
   module.exports = app;
 }());

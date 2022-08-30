@@ -136,21 +136,21 @@ public class OrdersController {
     }
 
 //    TODO: Add link to shipping
-//    @RequestMapping(method = RequestMethod.GET, value = "/orders")
-//    public @ResponseBody
-//    ResponseEntity<?> getOrders() {
-//        List<CustomerOrder> customerOrders = customerOrderRepository.findAll();
-//
-//        Resources<CustomerOrder> resources = new Resources<>(customerOrders);
-//
-//        resources.forEach(r -> r);
-//
-//        resources.add(linkTo(methodOn(ShippingController.class, CustomerOrder.getShipment::ge)).withSelfRel());
-//
-//        // add other links as needed
-//
-//        return ResponseEntity.ok(resources);
-//    }
+   @RequestMapping(method = RequestMethod.GET, value = "/orders_old")
+   public @ResponseBody
+   ResponseEntity<?> getOrders() {
+       List<CustomerOrder> customerOrders = customerOrderRepository.findAll();
+
+       Resources<CustomerOrder> resources = new Resources<>(customerOrders);
+
+       resources.forEach(r -> r);
+
+       resources.add(linkTo(methodOn(ShippingController.class, CustomerOrder.getShipment::ge)).withSelfRel());
+
+       // add other links as needed
+
+       return ResponseEntity.ok(resources);
+   }
 
     private float calculateTotal(List<Item> items) {
         float amount = 0F;
