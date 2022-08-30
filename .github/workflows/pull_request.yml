@@ -9,9 +9,8 @@ jobs:
     steps:
 
       - uses: actions/checkout@v2
-      - name: Verify Logs
+      - name: Verify
         uses: aiops/logsight-verification-action@v1.2.1
-        id: verify-logs
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           username: ${{ secrets.LOGSIGHT_USERNAME }}
