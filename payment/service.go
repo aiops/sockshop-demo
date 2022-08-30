@@ -17,6 +17,7 @@ type Service interface {
 type Authorisation struct {
 	Authorised bool   `json:"authorised"`
 	Message    string `json:"message"`
+	IsFraud    string `json:"isFraud"`
 }
 
 type Health struct {
@@ -47,15 +48,19 @@ func (s *service) Authorise(amount float32) (Authorisation, error) {
 	}
 	authorised := false
 	message := "Payment declined"
+	isFraud := "no"
 	if amount <= s.declineOverAmount {
 		authorised = true
 		message = "Payment authorised"
+		isFraud = "yes"
 	} else {
 		message = fmt.Sprintf("Payment declined: amount exceeds %.2f", s.declineOverAmount)
+		isFraud = "no"
 	}
 	return Authorisation{
 		Authorised: authorised,
 		Message:    message,
+		IsFraud:    isFraud,
 	}, nil
 }
 
