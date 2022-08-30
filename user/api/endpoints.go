@@ -28,6 +28,19 @@ type Endpoints struct {
 	HealthEndpoint      endpoint.Endpoint
 }
 
+// MakeLoginEndpoint returns an endpoint via the given service.
+func MakeLoginEndpoint(s Service) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (response interface{}, err error) {
+		var span stdopentracing.Span
+		span, ctx = stdopentracing.StartSpanFromContext(ctx, "login user")
+		span.SetTag("service", "user")
+		defer span.Finish()
+		req := request.(loginRequest)
+		u, err := s.Login(req.Username, req.Password)
+		return userResponse{User: u}, err
+	}
+}
+
 // MakeEndpoints returns an Endpoints structure, where each endpoint is
 // backed by the given service.
 func MakeEndpoints(s Service, tracer stdopentracing.Tracer) Endpoints {
@@ -45,18 +58,7 @@ func MakeEndpoints(s Service, tracer stdopentracing.Tracer) Endpoints {
 	}
 }
 
-// MakeLoginEndpoint returns an endpoint via the given service.
-func MakeLoginEndpoint(s Service) endpoint.Endpoint {
-	return func(ctx context.Context, request interface{}) (response interface{}, err error) {
-		var span stdopentracing.Span
-		span, ctx = stdopentracing.StartSpanFromContext(ctx, "login user")
-		span.SetTag("service", "user")
-		defer span.Finish()
-		req := request.(loginRequest)
-		u, err := s.Login(req.Username, req.Password)
-		return userResponse{User: u}, err
-	}
-}
+
 
 // MakeRegisterEndpoint returns an endpoint via the given service.
 func MakeRegisterEndpoint(s Service) endpoint.Endpoint {

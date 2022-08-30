@@ -52,12 +52,6 @@ public class ITShippingController {
     }
 
     @Test
-    public void getHealthCheck() throws Exception {
-        Map<String, List<HealthCheck>> healthChecks = shippingController.getHealth();
-        assertThat(healthChecks.get("health").size(), is(equalTo(2)));
-    }
-
-    @Test
     public void doNotCrashWhenNoQueue() throws Exception {
         doThrow(new AmqpException("test error")).when(rabbitTemplate).convertAndSend(anyString(), any(Shipment.class));
         Shipment original = new Shipment("someName");
@@ -65,4 +59,12 @@ public class ITShippingController {
         verify(rabbitTemplate, times(1)).convertAndSend(anyString(), any(Shipment.class));
         assertThat(original, is(equalTo(saved)));
     }
+
+    @Test
+    public void getHealthCheck() throws Exception {
+        Map<String, List<HealthCheck>> healthChecks = shippingController.getHealth();
+        assertThat(healthChecks.get("health").size(), is(equalTo(2)));
+    }
+
+
 }
