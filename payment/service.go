@@ -65,10 +65,12 @@ func (s *service) Authorise(amount float32) (Authorisation, error) {
 	} else {
 		message = fmt.Sprintf("Payment declined: amount exceeds %.2f", s.declineOverAmount)
 	}
-	return Authorisation{
-		Authorised: authorised,
-		Message:    message,
-	}, nil
+	authorisation := Authorisation{
+                    		Authorised: authorised,
+                    		Message:    message,
+                    	}
+    log.Println("Sending payment authorization response %v", authorisation)
+	return authorisation, nil
 }
 
 
