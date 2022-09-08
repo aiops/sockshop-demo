@@ -70,6 +70,7 @@ func (s *service) Authorise(amount float32) (Authorisation, error) {
                     		Message:    message,
                     		IsFraud:    isFraud,
                     	}
+                    	
     log.Println("Sending payment authorization response %v", authorisation)
 	return authorisation, nil
 }
