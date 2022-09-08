@@ -22,6 +22,16 @@ public class PrometheusMetricWriter implements MetricWriter {
         this.registry = registry;
     }
 
+
+    private Gauge gauge(String name) {
+        String key = sanitizeName(name);
+        return gauges.computeIfAbsent(key, k -> Gauge.build().name(k).help(k).register(registry));
+    }
+
+    private String sanitizeName(String name) {
+        return name.replaceAll("[^a-zA-Z0-9_]", "_");
+    }
+
     @Override
     public void increment(Delta<?> delta) {
         counter(delta.getName()).inc(delta.getValue().doubleValue());
@@ -32,23 +42,14 @@ public class PrometheusMetricWriter implements MetricWriter {
         counter(metricName).clear();
     }
 
-    @Override
-    public void set(Metric<?> value) {
-        gauge(value.getName()).set(value.getValue().doubleValue());
-    }
-
     private Counter counter(String name) {
         String key = sanitizeName(name);
         return counters.computeIfAbsent(key, k -> Counter.build().name(k).help(k).register(registry));
     }
 
-    private Gauge gauge(String name) {
-        String key = sanitizeName(name);
-        return gauges.computeIfAbsent(key, k -> Gauge.build().name(k).help(k).register(registry));
-    }
-
-    private String sanitizeName(String name) {
-        return name.replaceAll("[^a-zA-Z0-9_]", "_");
+    @Override
+    public void set(Metric<?> value) {
+        gauge(value.getName()).set(value.getValue().doubleValue());
     }
 
 }
