@@ -89,8 +89,8 @@ public class OrdersController {
                     });
             PaymentResponse paymentResponse = paymentFuture.get(timeout, TimeUnit.SECONDS);
             LOG.info("Received payment response: " + paymentResponse);
-            if (paymentResponse == null || paymentResponse.getIsFraud() == null) {
-                LOG.info("Unable to parse authorisation packet! Requested value is missing!");
+            if (paymentResponse == null) {
+                LOG.info("Unable to parse authorisation packet! The mapping failed !");
                 throw new PaymentDeclinedException("Unable to parse authorisation packet");
             }
             if (!paymentResponse.isAuthorised()) {
