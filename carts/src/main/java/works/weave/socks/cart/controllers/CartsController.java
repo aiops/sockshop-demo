@@ -34,7 +34,7 @@ public class CartsController {
     @ResponseStatus(HttpStatus.ACCEPTED)
     @RequestMapping(value = "/{customerId}/merge", method = RequestMethod.GET)
     public void mergeCarts(@PathVariable String customerId, @RequestParam(value = "sessionId") String sessionId) {
-        logger.debug("Merge carts request received for ids: " + customerId + " and " + sessionId);
+//         logger.debug("Merge carts request received for ids: " + customerId + " and " + sessionId);
         CartResource sessionCart = new CartResource(cartDAO, sessionId);
         CartResource customerCart = new CartResource(cartDAO, customerId);
         customerCart.merge(sessionCart.value().get()).run();

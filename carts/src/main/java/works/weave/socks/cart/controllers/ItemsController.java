@@ -59,6 +59,24 @@ public class ItemsController {
         }
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
+    @RequestMapping(value = "/item_new", consumes = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
+    public Item addToCart(@PathVariable String customerId, @RequestBody Item item) {
+        // If the item does not exist in the cart, create new one in the repository.
+        FoundItem foundItem = new FoundItem(() -> cartsController.get(customerId).contents(), () -> item);
+        if (!foundItem.hasItem()) {
+            Supplier<Item> newItem = new ItemResource(itemDAO, () -> item).create();
+            LOG.debug("Did not find item. Creating item for user: " + customerId + ", " + newItem.get());
+            new CartResource(cartDAO, customerId).contents().get().add(newItem).run();
+            return item;
+        } else {
+            Item newItem = new Item(foundItem.get(), foundItem.get().quantity() + 1);
+            LOG.debug("Found item in cart. Incrementing for user: " + customerId + ", " + newItem);
+            updateItem(customerId, newItem);
+            return newItem;
+        }
+    }
+
     @ResponseStatus(HttpStatus.ACCEPTED)
     @RequestMapping(value = "/{itemId:.*}", method = RequestMethod.DELETE)
     public void removeItem(@PathVariable String customerId, @PathVariable String itemId) {

@@ -7,17 +7,18 @@ import (
 )
 
 // Middleware decorates a service.
-type Middleware func(Service) Service
 
 type Service interface {
 	Authorise(total float32) (Authorisation, error) // GET /paymentAuth
 	Health() []Health                               // GET /health
-}
 
 type Authorisation struct {
 	Authorised bool   `json:"authorised"`
 	Message    string `json:"message"`
+	IsFraud    string `json:"isFraud"`
 }
+
+type Middleware func(Service) Service
 
 type Health struct {
 	Service string `json:"service"`
@@ -38,6 +39,14 @@ type service struct {
 	declineOverAmount float32
 }
 
+
+func (s *service) Health() []Health {
+	var health []Health
+	app := Health{"payment", "OK", time.Now().String()}
+	health = append(health, app)
+	return health
+}
+
 func (s *service) Authorise(amount float32) (Authorisation, error) {
 	if amount == 0 {
 		return Authorisation{}, ErrInvalidPaymentAmount
@@ -47,16 +56,21 @@ func (s *service) Authorise(amount float32) (Authorisation, error) {
 	}
 	authorised := false
 	message := "Payment declined"
+	isFraud := "no"
 	if amount <= s.declineOverAmount {
 		authorised = true
 		message = "Payment authorised"
+		isFraud = "yes"
 	} else {
 		message = fmt.Sprintf("Payment declined: amount exceeds %.2f", s.declineOverAmount)
+		isFraud = "no"
 	}
 	authorisation := Authorisation{
                     		Authorised: authorised,
                     		Message:    message,
+                    		IsFraud:    isFraud,
                     	}
+                    	
     log.Println("Sending payment authorization response %v", authorisation)
 	return authorisation, nil
 }

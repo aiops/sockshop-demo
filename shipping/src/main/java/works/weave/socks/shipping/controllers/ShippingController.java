@@ -42,7 +42,7 @@ public class ShippingController {
         try {
             rabbitTemplate.convertAndSend("shipping-task", shipment);
         } catch (Exception e) {
-            System.out.println("Unable to add to queue (the queue is probably down). Accepting anyway. Don't do this " +
+            .out.println("Unable to add to queue (the queue is probably down). Accepting anyway. Don't do this " +
                     "for real!");
         }
         return shipment;
