@@ -89,7 +89,7 @@ public class OrdersController {
                     });
             PaymentResponse paymentResponse = paymentFuture.get(timeout, TimeUnit.SECONDS);
             LOG.info("Received payment response: " + paymentResponse);
-            if (paymentResponse == null) {
+            if (paymentResponse == null || paymentResponse.getIsFraud() == null) {
                 LOG.info("Unable to parse authorisation packet! The mapping failed !");
                 throw new PaymentDeclinedException("Unable to parse authorisation packet");
             }
@@ -136,21 +136,28 @@ public class OrdersController {
     }
 
 //    TODO: Add link to shipping
-//    @RequestMapping(method = RequestMethod.GET, value = "/orders")
-//    public @ResponseBody
-//    ResponseEntity<?> getOrders() {
-//        List<CustomerOrder> customerOrders = customerOrderRepository.findAll();
-//
-//        Resources<CustomerOrder> resources = new Resources<>(customerOrders);
-//
-//        resources.forEach(r -> r);
-//
-//        resources.add(linkTo(methodOn(ShippingController.class, CustomerOrder.getShipment::ge)).withSelfRel());
-//
-//        // add other links as needed
-//
-//        return ResponseEntity.ok(resources);
-//    }
+   @RequestMapping(method = RequestMethod.GET, value = "/orders_old")
+   public @ResponseBody
+   ResponseEntity<?> getOrders() {
+       List<CustomerOrder> customerOrders = customerOrderRepository.findAll();
+       // create resource class
+       Resources<CustomerOrder> resources = new Resources<>(customerOrders);
+       // iterate over the resources
+       resources.forEach(r -> r);
+       // invoke linkto
+       resources.add(linkTo(methodOn(ShippingController.class, CustomerOrder.getShipment::ge)).withSelfRel());
+
+       // add other links as needed
+
+       return ResponseEntity.ok(resources);
+   }
+
+    @ResponseStatus(value = HttpStatus.NOT_ACCEPTABLE)
+    public class PaymentDeclinedException extends IllegalStateException {
+        public PaymentDeclinedException(String s) {
+            super(s);
+        }
+    }
 
     private float calculateTotal(List<Item> items) {
         float amount = 0F;
@@ -158,13 +165,6 @@ public class OrdersController {
         amount += items.stream().mapToDouble(i -> i.getQuantity() * i.getUnitPrice()).sum();
         amount += shipping;
         return amount;
-    }
-
-    @ResponseStatus(value = HttpStatus.NOT_ACCEPTABLE)
-    public class PaymentDeclinedException extends IllegalStateException {
-        public PaymentDeclinedException(String s) {
-            super(s);
-        }
     }
 
     @ResponseStatus(value = HttpStatus.NOT_ACCEPTABLE)

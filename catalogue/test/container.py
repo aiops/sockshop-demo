@@ -25,7 +25,7 @@ class CatalogueContainerTest(unittest.TestCase):
                     ("MYSQL_DATABASE", "socksdb")]
                 )
         # todo: a better way to ensure mysql is up
-        sleep(30)
+        sleep(20)
         command = ['docker', 'run',
                    '-d',
                    '--name', CatalogueContainerTest.container_name,
@@ -35,15 +35,6 @@ class CatalogueContainerTest(unittest.TestCase):
         Docker().execute(command)
         self.ip = Docker().get_container_ip(CatalogueContainerTest.container_name)
 
-    def tearDown(self):
-        Docker().kill_and_remove(CatalogueContainerTest.container_name)
-        Docker().kill_and_remove(CatalogueContainerTest.mysql_container_name)
-
-    def test_catalogue_has_item_id(self):
-        self.wait_or_fail('http://'+ self.ip +':80/catalogue')
-        r = requests.get('http://' + self.ip + '/catalogue', timeout=5)
-        data = r.json()
-        self.assertIsNotNone(data[0]['id'])
 
     def test_catalogue_has_image(self):
         self.wait_or_fail('http://'+ self.ip +':80/catalogue')
@@ -63,6 +54,17 @@ class CatalogueContainerTest(unittest.TestCase):
         self.assertGreater(out.find("0 failing"), -1)
         self.assertGreater(out.find("0 errors"), -1)
         print(out)
+
+    def tearDown(self):
+        Docker().kill_and_remove(CatalogueContainerTest.container_name)
+        Docker().kill_and_remove(CatalogueContainerTest.mysql_container_name)
+
+    def test_catalogue_has_item_id(self):
+        self.wait_or_fail('http://'+ self.ip +':80/catalogue')
+        r = requests.get('http://' + self.ip + '/catalogue', timeout=5)
+        data = r.json()
+        self.assertIsNotNone(data[0]['id'])
+
 
     def wait_or_fail(self,endpoint, limit=20):
         while Api().noResponse(endpoint):

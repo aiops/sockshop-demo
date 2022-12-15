@@ -10,7 +10,7 @@
 
   // List items in cart for current logged in user.
   app.get("/cart", function (req, res, next) {
-    console.log("Request received: " + req.url + ", " + req.query.custId);
+    // console.log("Request received: " + req.url + ", " + req.query.custId);
     var custId = helpers.getCustomerId(req, app.get("env"));
     console.log("Customer ID: " + custId);
     request(endpoints.cartsUrl + "/" + custId + "/items", function (error, response, body) {
@@ -34,6 +34,22 @@
         return next(error);
       }
       console.log('User cart deleted with status: ' + response.statusCode);
+      helpers.respondStatus(res, response.statusCode);
+    });
+  });
+
+  app.delete("/cart_new", function (req, res, next) {
+    var custId = helpers.getCustomerId(req, app.get("env"));
+    // console.log('Attempting to delete cart for user: ' + custId);
+    var options = {
+      uri: endpoints.cartsUrl + "/" + custId,
+      method: 'DELETE'
+    };
+    request(options, function (error, response, body) {
+      if (error) {
+        return next(error);
+      }
+      // console.log('User cart deleted with status: ' + response.statusCode);
       helpers.respondStatus(res, response.statusCode);
     });
   });
